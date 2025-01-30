@@ -13,6 +13,7 @@ public class MongoDBConnection
     {
         // Cargar las variables de entorno desde el archivo .env
         Env.Load();
+        Env.TraversePath().Load();
 
         // Obtener la URI de la base de datos desde la variable de entorno
         var connectionUri = Environment.GetEnvironmentVariable("MONGO_URI");

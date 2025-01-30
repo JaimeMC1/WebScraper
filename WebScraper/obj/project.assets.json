@@ -48,41 +48,6 @@
           "lib/netstandard1.3/DotNetEnv.dll": {}
         }
       },
-      "HtmlAgilityPack/1.11.72": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard2.0/HtmlAgilityPack.dll": {
-            "related": ".deps.json;.pdb;.xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard2.0/HtmlAgilityPack.dll": {
-            "related": ".deps.json;.pdb;.xml"
-          }
-        }
-      },
-      "HtmlAgilityPack.CssSelectors/1.0.2": {
-        "type": "package",
-        "dependencies": {
-          "HtmlAgilityPack": "1.4.9"
-        },
-        "compile": {
-          "lib/net45/HtmlAgilityPack.CssSelectors.dll": {
-            "related": ".pdb"
-          },
-          "lib/net45/HtmlAgilityPack.dll": {
-            "related": ".CssSelectors.pdb;.xml"
-          }
-        },
-        "runtime": {
-          "lib/net45/HtmlAgilityPack.CssSelectors.dll": {
-            "related": ".pdb"
-          },
-          "lib/net45/HtmlAgilityPack.dll": {
-            "related": ".CssSelectors.pdb;.xml"
-          }
-        }
-      },
       "Microsoft.Extensions.Configuration/1.1.2": {
         "type": "package",
         "dependencies": {
@@ -458,6 +423,44 @@
             "assetType": "native",
             "rid": "ubuntu.16.10-x64"
           }
+        }
+      },
+      "Selenium.Support/4.28.0": {
+        "type": "package",
+        "dependencies": {
+          "Selenium.WebDriver": "4.28.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/WebDriver.Support.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/WebDriver.Support.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Selenium.WebDriver/4.28.0": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/WebDriver.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/WebDriver.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "buildTransitive/Selenium.WebDriver.targets": {}
+        }
+      },
+      "Selenium.WebDriver.ChromeDriver/132.0.6834.15900": {
+        "type": "package",
+        "build": {
+          "build/Selenium.WebDriver.ChromeDriver.targets": {}
         }
       },
       "SharpCompress/0.30.1": {
@@ -1680,70 +1683,6 @@
         "lib/netstandard1.3/DotNetEnv.dll"
       ]
     },
-    "HtmlAgilityPack/1.11.72": {
-      "sha512": "RNLgXxTFdIGFI+o5l8c2aJ2L5StIRn9Uv8HKR76p7QP4ZUL26wzpWUCWh08xWUdkL2kocl+Xhv6VUu0rA1npVg==",
-      "type": "package",
-      "path": "htmlagilitypack/1.11.72",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "htmlagilitypack.1.11.72.nupkg.sha512",
-        "htmlagilitypack.nuspec",
-        "lib/Net35/HtmlAgilityPack.dll",
-        "lib/Net35/HtmlAgilityPack.pdb",
-        "lib/Net35/HtmlAgilityPack.xml",
-        "lib/Net40-client/HtmlAgilityPack.dll",
-        "lib/Net40-client/HtmlAgilityPack.pdb",
-        "lib/Net40-client/HtmlAgilityPack.xml",
-        "lib/Net40/HtmlAgilityPack.XML",
-        "lib/Net40/HtmlAgilityPack.dll",
-        "lib/Net40/HtmlAgilityPack.pdb",
-        "lib/Net45/HtmlAgilityPack.XML",
-        "lib/Net45/HtmlAgilityPack.dll",
-        "lib/Net45/HtmlAgilityPack.pdb",
-        "lib/NetCore45/HtmlAgilityPack.XML",
-        "lib/NetCore45/HtmlAgilityPack.dll",
-        "lib/NetCore45/HtmlAgilityPack.pdb",
-        "lib/netstandard1.3/HtmlAgilityPack.deps.json",
-        "lib/netstandard1.3/HtmlAgilityPack.dll",
-        "lib/netstandard1.3/HtmlAgilityPack.pdb",
-        "lib/netstandard1.3/HtmlAgilityPack.xml",
-        "lib/netstandard1.6/HtmlAgilityPack.deps.json",
-        "lib/netstandard1.6/HtmlAgilityPack.dll",
-        "lib/netstandard1.6/HtmlAgilityPack.pdb",
-        "lib/netstandard1.6/HtmlAgilityPack.xml",
-        "lib/netstandard2.0/HtmlAgilityPack.deps.json",
-        "lib/netstandard2.0/HtmlAgilityPack.dll",
-        "lib/netstandard2.0/HtmlAgilityPack.pdb",
-        "lib/netstandard2.0/HtmlAgilityPack.xml",
-        "lib/portable-net45+netcore45+wp8+MonoAndroid+MonoTouch/HtmlAgilityPack.XML",
-        "lib/portable-net45+netcore45+wp8+MonoAndroid+MonoTouch/HtmlAgilityPack.dll",
-        "lib/portable-net45+netcore45+wp8+MonoAndroid+MonoTouch/HtmlAgilityPack.pdb",
-        "lib/portable-net45+netcore45+wpa81+wp8+MonoAndroid+MonoTouch/HtmlAgilityPack.XML",
-        "lib/portable-net45+netcore45+wpa81+wp8+MonoAndroid+MonoTouch/HtmlAgilityPack.dll",
-        "lib/portable-net45+netcore45+wpa81+wp8+MonoAndroid+MonoTouch/HtmlAgilityPack.pdb",
-        "lib/uap10.0/HtmlAgilityPack.XML",
-        "lib/uap10.0/HtmlAgilityPack.dll",
-        "lib/uap10.0/HtmlAgilityPack.pdb",
-        "lib/uap10.0/HtmlAgilityPack.pri",
-        "readme.md"
-      ]
-    },
-    "HtmlAgilityPack.CssSelectors/1.0.2": {
-      "sha512": "bB4FeVvcNROENPWQfFSmPQ6q99jGk8ru5QoBB3qnEeaP451fjnqQ0uPuMgmWHAOZIXUAoOQozv/5fEEVSDyIzA==",
-      "type": "package",
-      "path": "htmlagilitypack.cssselectors/1.0.2",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "htmlagilitypack.cssselectors.1.0.2.nupkg.sha512",
-        "htmlagilitypack.cssselectors.nuspec",
-        "lib/net45/HtmlAgilityPack.CssSelectors.dll",
-        "lib/net45/HtmlAgilityPack.CssSelectors.pdb",
-        "lib/net45/HtmlAgilityPack.dll",
-        "lib/net45/HtmlAgilityPack.xml"
-      ]
-    },
     "Microsoft.Extensions.Configuration/1.1.2": {
       "sha512": "eK5BHx/pHLGGO/WDo7CS070MGgx3N7B/ORO/oKeS0qgCyv+ZAR47YWKXmG5aF+lIrAJd3uJjMTdTKgXTU2UDWw==",
       "type": "package",
@@ -2184,6 +2123,66 @@
         "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.2.nupkg.sha512",
         "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.nuspec",
         "runtimes/ubuntu.16.10-x64/native/System.Security.Cryptography.Native.OpenSsl.so"
+      ]
+    },
+    "Selenium.Support/4.28.0": {
+      "sha512": "6S1gZacGGDRitU2kO92AUHQU1JkMdiFK4NAm6fn8+6eZMU8n04MF6skH6oUqkWAv0wyF1rKWD5IBMFiTBm6G5A==",
+      "type": "package",
+      "path": "selenium.support/4.28.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "icon.png",
+        "lib/netstandard2.0/WebDriver.Support.dll",
+        "lib/netstandard2.0/WebDriver.Support.xml",
+        "selenium.support.4.28.0.nupkg.sha512",
+        "selenium.support.nuspec"
+      ]
+    },
+    "Selenium.WebDriver/4.28.0": {
+      "sha512": "g4iZWBHQH5dObJQKcKXsol8yFJPIkXhVdn/8P726d4OmpHgQ9aYSwtTCWo+FUYHIkMS+haItgeOT6hilmLeHNw==",
+      "type": "package",
+      "path": "selenium.webdriver/4.28.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "build/Selenium.WebDriver.targets",
+        "buildTransitive/Selenium.WebDriver.targets",
+        "icon.png",
+        "lib/net8.0/WebDriver.dll",
+        "lib/net8.0/WebDriver.xml",
+        "lib/netstandard2.0/WebDriver.dll",
+        "lib/netstandard2.0/WebDriver.xml",
+        "manager/linux/selenium-manager",
+        "manager/macos/selenium-manager",
+        "manager/windows/selenium-manager.exe",
+        "selenium.webdriver.4.28.0.nupkg.sha512",
+        "selenium.webdriver.nuspec"
+      ]
+    },
+    "Selenium.WebDriver.ChromeDriver/132.0.6834.15900": {
+      "sha512": "cBMMydhP8pLAh+ak+iE+aEo5Q1gRv2N7/r5Us82L0nv9F9YVCioqSJ0zSvl0i2PCdyZT0yhgiM62JWQZznEfwg==",
+      "type": "package",
+      "path": "selenium.webdriver.chromedriver/132.0.6834.15900",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "README.md",
+        "build/DefinePropertiesChromeDriver.targets",
+        "build/Selenium.WebDriver.ChromeDriver.targets",
+        "driver/linux64/LICENSE.chromedriver",
+        "driver/linux64/chromedriver",
+        "driver/mac64/LICENSE.chromedriver",
+        "driver/mac64/chromedriver",
+        "driver/mac64arm/LICENSE.chromedriver",
+        "driver/mac64arm/chromedriver",
+        "driver/win32/LICENSE.chromedriver",
+        "driver/win32/chromedriver.exe",
+        "nupkg-icon.png",
+        "selenium.webdriver.chromedriver.132.0.6834.15900.nupkg.sha512",
+        "selenium.webdriver.chromedriver.nuspec"
       ]
     },
     "SharpCompress/0.30.1": {
@@ -5381,9 +5380,10 @@
     "net8.0-windows7.0": [
       "CsvHelper >= 33.0.1",
       "DotNetEnv >= 3.1.1",
-      "HtmlAgilityPack >= 1.11.72",
-      "HtmlAgilityPack.CssSelectors >= 1.0.2",
-      "MongoDB.Driver >= 3.1.0"
+      "MongoDB.Driver >= 3.1.0",
+      "Selenium.Support >= 4.28.0",
+      "Selenium.WebDriver >= 4.28.0",
+      "Selenium.WebDriver.ChromeDriver >= 132.0.6834.15900"
     ]
   },
   "packageFolders": {
@@ -5444,17 +5444,21 @@
             "target": "Package",
             "version": "[3.1.1, )"
           },
-          "HtmlAgilityPack": {
-            "target": "Package",
-            "version": "[1.11.72, )"
-          },
-          "HtmlAgilityPack.CssSelectors": {
-            "target": "Package",
-            "version": "[1.0.2, )"
-          },
           "MongoDB.Driver": {
             "target": "Package",
             "version": "[3.1.0, )"
+          },
+          "Selenium.Support": {
+            "target": "Package",
+            "version": "[4.28.0, )"
+          },
+          "Selenium.WebDriver": {
+            "target": "Package",
+            "version": "[4.28.0, )"
+          },
+          "Selenium.WebDriver.ChromeDriver": {
+            "target": "Package",
+            "version": "[132.0.6834.15900, )"
           }
         },
         "imports": [
@@ -5479,17 +5483,5 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "El paquete \"HtmlAgilityPack.CssSelectors 1.0.2\" se restauró con \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1\" en lugar de la plataforma de destino del proyecto \"net8.0-windows7.0\". Puede que el paquete no sea totalmente compatible con el proyecto.",
-      "libraryId": "HtmlAgilityPack.CssSelectors",
-      "targetGraphs": [
-        "net8.0-windows7.0"
-      ]
-    }
-  ]
+  }
 }
