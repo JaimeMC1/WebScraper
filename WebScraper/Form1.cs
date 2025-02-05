@@ -2,20 +2,12 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
 
 namespace WebScraper
 {
     public partial class Form1 : Form
     {
-        // Defining a custom class to store the scraped data 
-        public class Product
-        {
-            public string? Url { get; set; }
-            public string? Image { get; set; }
-            public string? Name { get; set; }
-            public string? Price { get; set; }
-        }
-
         public class TenisPlayer
         {
             public string? UserId { get; set; } // the id that apt provide in the url for each player
@@ -88,67 +80,91 @@ namespace WebScraper
             ChromeOptions options = new ChromeOptions();
             //options.AddArgument("--headless"); // Opcional: ejecuta en modo sin interfaz gráfica
 
-            IWebDriver driver = new ChromeDriver(options);
-
-            // Agregamos un numero random para el retraso. (del thread)
-            Random random = new Random();
+            ChromeDriver driver = new ChromeDriver(options);
 
             // Navegar a la página
-            driver.Navigate().GoToUrl("https://www.atptour.com/es/players/carlos-alcaraz/a0e2/player-activity?matchType=Singles&year=2025&tournament=all");
-            Thread.Sleep(random.Next(3000, 5000));
+            driver.Navigate().GoToUrl("https://www.atptour.com/es/players/carlos-alcaraz/a0e2/overview");
 
             // Creating the list that will keep the scraped data 
-            var products = new List<Product>();
+            var tenisPlayer = new List<TenisPlayer>();
+
+            // Creamos el log
+            DevStatsTxt.Text = "";
 
             // Esperar a que los productos carguen
-            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-            wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").ToString() == "complete");
-
-            // Comprobar si las cookies están presentes y hacer clic si es necesario
-            var acceptButton = driver.FindElements(By.Id("onetrust-accept-btn-handler")).FirstOrDefault();
-            if (acceptButton != null)
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
+            try
             {
-                //acceptButton.Click(); // Hacer clic si el botón está presente
+                wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").ToString() == "complete");
+                DevStatsTxt.Text += "Carga Inicial SI completada\n";
+            }
+            catch (WebDriverTimeoutException)
+            {
+                DevStatsTxt.Text += "Carga Inicial NO completada\n";
             }
 
-            wait.Until(d => d.FindElements(By.CssSelector(".player_cards.atp_card")));
-
+            // Comprobar si las cookies están presentes y hacer clic si es necesario
+            int i = 0;
+            while (i <= 5)
+            {
+                var acceptButton = driver.FindElements(By.Id("onetrust-accept-btn-handler")).FirstOrDefault();
+                if (acceptButton != null)
+                {
+                    acceptButton.Click(); // Hacer clic si el botón está presente
+                    DevStatsTxt.Text += "Cookies SI encontradas\n";
+                    break;
+                }
+                else
+                    DevStatsTxt.Text += "Cookies NO encontradas\n";
+                Thread.Sleep(500);
+                i++;
+            }
+            
             // Obtener elementos de productos con Selenium
-            var productElements = driver.FindElements(By.CssSelector(".player_cards.atp_card"));
+            wait.Until(d => d.FindElements(By.CssSelector(".personal_details")));
+            var productElements = driver.FindElements(By.CssSelector(".personal_details"));
 
             // Iterating over the list of product HTML elements 
             foreach (var productElement in productElements)
             {
                 try
                 {
-                    string url = productElement.FindElement(By.CssSelector("a")).GetAttribute("href");
-                    string image = productElement.FindElement(By.CssSelector("img")).GetAttribute("src");
-                    string name = productElement.FindElement(By.CssSelector("h2")).Text;
-                    string price = productElement.FindElement(By.CssSelector(".price")).Text;
+                    // De la Url actual Divide la URL y extraer la parte entre el nombre y "overview"
+                    string[] partsUrl = driver.Url.Split('/');
+                    string playerId = partsUrl[partsUrl.Length - 2];
 
-                    products.Add(new Product() { Url = url, Image = image, Name = name, Price = price });
+                    string userId = playerId;
+                    DevStatsTxt.Text += "\nId: "+ userId;
+                    string name = driver.FindElement(By.CssSelector(".player_name")).Text;
+                    DevStatsTxt.Text += "\nName: " + name;
+                    string age = productElement.FindElement(By.CssSelector(".pd_left li:first-child span:nth-child(2)")).Text.Split(' ')[0];
+                    DevStatsTxt.Text += "\nAge: " + age;
+                    string country = productElement.FindElement(By.CssSelector(".flag")).Text;
+                    DevStatsTxt.Text += "\nCountry: " + country;
+                    string hand= productElement.FindElement(By.CssSelector(".pd_right li:nth-child(3) span:nth-child(2)")).Text;
+                    DevStatsTxt.Text += "\nHand: " + hand;
+
+                    tenisPlayer.Add(new TenisPlayer() { UserId = userId, Name = name, Age = age, Country = country, Hand = hand });
                 }
                 catch (NoSuchElementException)
                 {
-                    Console.WriteLine("Algunos elementos no se encontraron y se omitieron.");
+                    DevStatsTxt.Text += "\nAlgunos elementos no se encontraron y se omitieron\n";
                 }
             }
 
             // Cerrar Selenium
             driver.Quit();
 
-            // Insertar en MongoDB
-            var productsCollection = database.GetCollection<Product>("Products");
-
-            try
+            // Insertar o actualizar en MongoDB
+            var playersCollection = database.GetCollection<TenisPlayer>("tenis_players");
+            foreach (var player in tenisPlayer)
             {
-                productsCollection.InsertMany(products);
-                Console.WriteLine("Productos insertados correctamente en MongoDB!");
+                var filter = Builders<TenisPlayer>.Filter.Eq(p => p.UserId, player.UserId);
+                var optionss = new ReplaceOptions { IsUpsert = true };
+                
+                playersCollection.ReplaceOne(filter, player, optionss);
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error insertando productos: {ex.Message}");
-            }
+            DevStatsTxt.Text += "\nProductos insertados o actualizados correctamente en MongoDB";
         }
 
         private void btnUpdMatch_Click(object sender, EventArgs e)

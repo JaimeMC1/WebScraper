@@ -1,5 +1,6 @@
 ﻿using MongoDB.Driver;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Conventions;
 using System;
 using System.Text.Json;
 using DotNetEnv;
@@ -11,6 +12,10 @@ public class MongoDBConnection
 
     public MongoDBConnection()
     {
+        // Configurar la convención de nombres para que los campos comiencen con minúscula
+        var conventionPack = new ConventionPack { new CamelCaseElementNameConvention() };
+        ConventionRegistry.Register("CamelCase", conventionPack, t => true);
+
         // Cargar las variables de entorno desde el archivo .env
         Env.Load();
         Env.TraversePath().Load();

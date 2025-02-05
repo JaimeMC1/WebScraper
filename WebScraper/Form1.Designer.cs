@@ -28,27 +28,29 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btnUpdProfile = new Button();
+            BtnUpdProfile = new Button();
             btnUpdStats = new Button();
             btnUpdMatch = new Button();
             label1 = new Label();
+            label2 = new Label();
+            DevStatsTxt = new Label();
             SuspendLayout();
             // 
-            // btnUpdProfile
+            // BtnUpdProfile
             // 
-            btnUpdProfile.Location = new Point(114, 57);
-            btnUpdProfile.Name = "btnUpdProfile";
-            btnUpdProfile.Size = new Size(120, 29);
-            btnUpdProfile.TabIndex = 0;
-            btnUpdProfile.Text = "Update Profile";
-            btnUpdProfile.UseVisualStyleBackColor = true;
-            btnUpdProfile.Click += btnUpdProfile_Click;
+            BtnUpdProfile.Location = new Point(26, 55);
+            BtnUpdProfile.Name = "BtnUpdProfile";
+            BtnUpdProfile.Size = new Size(120, 45);
+            BtnUpdProfile.TabIndex = 0;
+            BtnUpdProfile.Text = "Update Profile";
+            BtnUpdProfile.UseVisualStyleBackColor = true;
+            BtnUpdProfile.Click += btnUpdProfile_Click;
             // 
             // btnUpdStats
             // 
-            btnUpdStats.Location = new Point(114, 187);
+            btnUpdStats.Location = new Point(26, 157);
             btnUpdStats.Name = "btnUpdStats";
-            btnUpdStats.Size = new Size(120, 29);
+            btnUpdStats.Size = new Size(120, 45);
             btnUpdStats.TabIndex = 1;
             btnUpdStats.Text = "Update stats";
             btnUpdStats.UseVisualStyleBackColor = true;
@@ -56,9 +58,9 @@
             // 
             // btnUpdMatch
             // 
-            btnUpdMatch.Location = new Point(114, 124);
+            btnUpdMatch.Location = new Point(26, 106);
             btnUpdMatch.Name = "btnUpdMatch";
-            btnUpdMatch.Size = new Size(120, 29);
+            btnUpdMatch.Size = new Size(120, 45);
             btnUpdMatch.TabIndex = 2;
             btnUpdMatch.Text = "Update matchs";
             btnUpdMatch.UseVisualStyleBackColor = true;
@@ -67,21 +69,41 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(113, 13);
+            label1.Location = new Point(26, 23);
             label1.Name = "label1";
             label1.Size = new Size(103, 20);
             label1.TabIndex = 3;
             label1.Text = "Carlos Alzaraz";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(289, 23);
+            label2.Name = "label2";
+            label2.Size = new Size(99, 20);
+            label2.TabIndex = 4;
+            label2.Text = "Develop stats";
+            // 
+            // DevStatsTxt
+            // 
+            DevStatsTxt.AutoSize = true;
+            DevStatsTxt.Location = new Point(289, 55);
+            DevStatsTxt.Name = "DevStatsTxt";
+            DevStatsTxt.Size = new Size(50, 20);
+            DevStatsTxt.TabIndex = 5;
+            DevStatsTxt.Text = "label3";
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(691, 450);
+            Controls.Add(DevStatsTxt);
+            Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(btnUpdMatch);
             Controls.Add(btnUpdStats);
-            Controls.Add(btnUpdProfile);
+            Controls.Add(BtnUpdProfile);
             Name = "Form1";
             Text = "Form1";
             ResumeLayout(false);
@@ -90,9 +112,11 @@
 
         #endregion
 
-        private Button btnUpdProfile;
+        private Button BtnUpdProfile;
         private Button btnUpdStats;
         private Button btnUpdMatch;
         private Label label1;
+        private Label label2;
+        private Label DevStatsTxt;
     }
 }
