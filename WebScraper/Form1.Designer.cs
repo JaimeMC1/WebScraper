@@ -31,7 +31,6 @@
             BtnUpdProfile = new Button();
             btnUpdStats = new Button();
             btnUpdMatch = new Button();
-            label1 = new Label();
             label2 = new Label();
             DevStatsTxt = new Label();
             SuspendLayout();
@@ -62,18 +61,9 @@
             btnUpdMatch.Name = "btnUpdMatch";
             btnUpdMatch.Size = new Size(120, 45);
             btnUpdMatch.TabIndex = 2;
-            btnUpdMatch.Text = "Update matchs";
+            btnUpdMatch.Text = "Update 10";
             btnUpdMatch.UseVisualStyleBackColor = true;
             btnUpdMatch.Click += btnUpdMatch_Click;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(26, 23);
-            label1.Name = "label1";
-            label1.Size = new Size(103, 20);
-            label1.TabIndex = 3;
-            label1.Text = "Carlos Alzaraz";
             // 
             // label2
             // 
@@ -100,7 +90,6 @@
             ClientSize = new Size(691, 450);
             Controls.Add(DevStatsTxt);
             Controls.Add(label2);
-            Controls.Add(label1);
             Controls.Add(btnUpdMatch);
             Controls.Add(btnUpdStats);
             Controls.Add(BtnUpdProfile);
@@ -115,7 +104,6 @@
         private Button BtnUpdProfile;
         private Button btnUpdStats;
         private Button btnUpdMatch;
-        private Label label1;
         private Label label2;
         private Label DevStatsTxt;
     }
