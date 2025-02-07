@@ -2,7 +2,10 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using Sprache;
+using static System.Windows.Forms.Design.AxImporter;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
+using static WebScraper.Form1;
 
 namespace WebScraper
 {
@@ -19,7 +22,10 @@ namespace WebScraper
 
         public class TenisPlayerStats
         {
+            public string? UserId { get; set; } // the id that apt provide in the url for each player
             public string? Year { get; set; }
+            public string? Win { get; set; }
+            public string? Lose { get; set; }
             public string? Aces { get; set; }
             public string? DoubFaul { get; set; } // Double Faults
             public string? FSer { get; set; } // First serve
@@ -176,8 +182,10 @@ namespace WebScraper
             // Configuración de Selenium con Chrome
             ChromeOptions options = new ChromeOptions();
             //options.AddArgument("--headless"); // Opcional: ejecuta en modo sin interfaz gráfica
+            var chromeService = ChromeDriverService.CreateDefaultService();
+            chromeService.HideCommandPromptWindow = true; // Oculta la ventana de la consola
 
-            ChromeDriver driver = new ChromeDriver(options);
+            ChromeDriver driver = new ChromeDriver(chromeService, options);
 
             // Navegar a la página
             driver.Navigate().GoToUrl("https://www.atptour.com/es/players?matchType=Singles&rank=Top%2010&region=all");
@@ -187,8 +195,12 @@ namespace WebScraper
 
             // Creating the list that will keep the scraped data 
             var tenisPlayer = new List<TenisPlayer>();
+            var tenisPlayerStats = new List<TenisPlayerStats>();
+            var tenisPlayerActivity = new List<TenisPlayerActivity>();
             // Generamos una lista para guardar los urls de los tenistas
             List<string> playerUrls = [];
+            List<string> ActivUrls = [];
+            List<string> StatsUrls = [];
 
             // Creamos el log
             DevStatsTxt.Text = "";
@@ -207,13 +219,13 @@ namespace WebScraper
             }
 
             // Cerrar Selenium
-            driver.Close();
+            driver.Quit();
 
-            // Interactuamos con cada tenista
+            // Interactuamos con cada perfil del tenista
             foreach (var playerUrl in playerUrls)
             {
                 DevStatsTxt.Text = "";
-                driver = new ChromeDriver(options);
+                driver = new ChromeDriver(chromeService, options);
 
                 // Navegar a la página
                 driver.Navigate().GoToUrl(playerUrl);
@@ -221,6 +233,10 @@ namespace WebScraper
                 wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
 
                 CargarCookies(driver, wait);
+
+                // Obtenemos los enlaces de la actividad y las estadisticas del tenista
+                ActivUrls.Add(driver.FindElement(By.CssSelector(".tab-nav li:nth-child(3) a")).GetAttribute("href"));
+                StatsUrls.Add(driver.FindElement(By.CssSelector(".tab-nav li:nth-child(4) a")).GetAttribute("href"));
 
                 // Obtener elementos de productos con Selenium
                 wait.Until(d => d.FindElements(By.CssSelector(".personal_details")));
@@ -267,11 +283,107 @@ namespace WebScraper
                 }
                 DevStatsTxt.Text += "\nProductos insertados o actualizados correctamente en MongoDB";
             }
+
+            // Interactuamos con cada perfil del tenista
+            foreach (var statsUrl in StatsUrls)
+            {
+                DevStatsTxt.Text = "";
+                driver = new ChromeDriver(chromeService, options);
+
+                // Navegar a la página
+                driver.Navigate().GoToUrl(statsUrl);
+
+                wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
+
+                CargarCookies(driver, wait);
+
+                // Obtener elementos de productos con Selenium
+                wait.Until(d => d.FindElements(By.CssSelector(".statistics_content")));
+                productElements = driver.FindElements(By.CssSelector(".statistics_content"));
+
+                // Iterating over the list of product HTML elements 
+                foreach (var productElement in productElements)
+                {
+                    try
+                    {
+                        // De la Url actual Divide la URL y extraer la parte entre el nombre y "overview"
+                        string[] partsUrl = driver.Url.Split('/');
+                        string playerId = partsUrl[partsUrl.Length - 2];
+
+                        string[] wl = driver.FindElement(By.CssSelector(".stats-content .player-stats-details:nth-child(2) .wins")).Text.Split('-');
+
+                        string userId = playerId;
+                        string year = "all";
+                        string win = wl[0];
+                        string lose = wl[1];
+                        string aces = productElement.FindElement(By.CssSelector("ul li:nth-child(1) .stats_percentage")).Text;
+                        string doubFaul = productElement.FindElement(By.CssSelector("ul li:nth-child(2) .stats_percentage")).Text;
+                        string fSer = productElement.FindElement(By.CssSelector("ul li:nth-child(3) .stats_percentage")).Text;
+                        string fSerPoW = productElement.FindElement(By.CssSelector("ul li:nth-child(4) .stats_percentage")).Text;
+                        string sSerPoW = productElement.FindElement(By.CssSelector("ul li:nth-child(5) .stats_percentage")).Text;
+                        string breakPoF = productElement.FindElement(By.CssSelector("ul li:nth-child(6) .stats_percentage")).Text;
+                        string breakPoS = productElement.FindElement(By.CssSelector("ul li:nth-child(7) .stats_percentage")).Text;
+                        string serviGamesP = productElement.FindElement(By.CssSelector("ul li:nth-child(8) .stats_percentage")).Text;
+                        string serviGamesW = productElement.FindElement(By.CssSelector("ul li:nth-child(9) .stats_percentage")).Text;
+                        string totServiPoW = productElement.FindElement(By.CssSelector("ul li:nth-child(10) .stats_percentage")).Text;
+                        string fSerRetPoW = productElement.FindElement(By.CssSelector("div:nth-of-type(2) ul li:nth-child(1) .stats_percentage")).Text;
+                        string sSerRetPoW = productElement.FindElement(By.CssSelector("div:nth-of-type(2) ul li:nth-child(2) .stats_percentage")).Text;
+                        string breakPoO = productElement.FindElement(By.CssSelector("div:nth-of-type(2) ul li:nth-child(3) .stats_percentage")).Text;
+                        string breakPoC = productElement.FindElement(By.CssSelector("div:nth-of-type(2) ul li:nth-child(4) .stats_percentage")).Text;
+                        string retGamesP = productElement.FindElement(By.CssSelector("div:nth-of-type(2) ul li:nth-child(5) .stats_percentage")).Text;
+                        string retGamesW = productElement.FindElement(By.CssSelector("div:nth-of-type(2) ul li:nth-child(6) .stats_percentage")).Text;
+                        string retPoW = productElement.FindElement(By.CssSelector("div:nth-of-type(2) ul li:nth-child(7) .stats_percentage")).Text;
+                        string totPoW = productElement.FindElement(By.CssSelector("ul li:nth-child(8) .stats_percentage")).Text;
+
+                        tenisPlayerStats.Add(new TenisPlayerStats() {   
+                            UserId = userId, 
+                            Year = year,
+                            Win = win,
+                            Lose = lose,
+                            Aces = aces, 
+                            DoubFaul = doubFaul, 
+                            FSer = fSer, 
+                            FSerPoW = fSerPoW,
+                            SSerPoW = sSerPoW,
+                            BreakPoF = breakPoF,
+                            BreakPoS = breakPoS,
+                            ServiGamesP = serviGamesP,
+                            ServiGamesW = serviGamesW,
+                            TotServiPoW = totServiPoW,
+                            FSerRetPoW = fSerRetPoW,
+                            SSerRetPoW = sSerRetPoW,
+                            BreakPoO = breakPoO,
+                            BreakPoC = breakPoC,
+                            RetGamesP = retGamesP,
+                            RetGamesW = retGamesW,
+                            RetPoW = retPoW,
+                            TotPoW = totPoW,
+                        });
+                    }
+                    catch (NoSuchElementException)
+                    {
+                        DevStatsTxt.Text += "\nAlgunos elementos no se encontraron y se omitieron\n";
+                    }
+                }
+
+                driver.Quit();
+
+                // Insertar o actualizar en MongoDB
+                var playersCollection = database.GetCollection<TenisPlayerStats>("tenis_player_stats");
+                foreach (var tenisPlayerStat in tenisPlayerStats)
+                {
+                    var filter = Builders<TenisPlayerStats>.Filter.Eq(p => p.UserId, tenisPlayerStat.UserId);
+                    var optionss = new ReplaceOptions { IsUpsert = true };
+
+                    playersCollection.ReplaceOne(filter, tenisPlayerStat, optionss);
+                }
+                DevStatsTxt.Text += "\nProductos insertados o actualizados correctamente en MongoDB";
+            }
         }
 
         private void btnUpdStats_Click(object sender, EventArgs e)
         {
-
+            
         }
 
         private void CargarCookies(ChromeDriver driver, WebDriverWait wait)
