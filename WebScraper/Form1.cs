@@ -3,6 +3,8 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using Sprache;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using static System.Windows.Forms.Design.AxImporter;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
 using static WebScraper.Form1;
@@ -48,28 +50,18 @@ namespace WebScraper
 
         public class TenisPlayerActivity
         {
-            public int? MatchId { get; set; } // The id of the match
-            public string? MatchUser1 { get; set; } // The players who played
-            public string? MatchUser2 { get; set; } // The players who played
-            public int? Winner { get; set; } // The player who won
+            public string? MatchId { get; set; } // The id of the match. got it from the href 61 26 64
+            public string? MatchUser1 { get; set; } // The players who played. got it from the url
+            public string? MatchUser2 { get; set; } // The players who played. got it from the href player against+
+            public string? Tournament { get; set; }  // Aces
+            public string? Rd { get; set; }  // Aces
+            public string? Winner { get; set; } // The player who won. tick or x
             public string? Year { get; set; }
-            public string? Score { get; set; }
-            public string? SerRat { get; set; } // Serve Rating
-            public string? Aces { get; set; }  // Aces
-            public string? DoubFaul { get; set; } // Double Faults
-            public string? FSer { get; set; } // First serve
-            public string? FSerPoW { get; set; } // First serve points won
-            public string? SSerPoW { get; set; } // Second serve points won
-            public string? BreakPoS { get; set; } // Break points saved
-            public string? ServiGamesP { get; set; } // Service games played
-            public string? RetRat { get; set; } // Return Rating
-            public string? FSerRetPoW { get; set; } // First serve return points won
-            public string? SSerRetPoW { get; set; } // Second serve return points won
-            public string? BreakPoC { get; set; } // break points converted
-            public string? RetGamesP { get; set; } // Return games played
-            public string? ServiPoW { get; set; } // Service Points Won
-            public string? RetPoW { get; set; } // Return Points Won
-            public string? TotPoW { get; set; } // Total Points Won
+            public string? Set1 { get; set; }
+            public string? Set2 { get; set; } // Serve Rating
+            public string? Set3 { get; set; }  // Aces
+            public string? Set4 { get; set; } // Double Faults
+            public string? Set5 { get; set; }  // Aces
         }
         public Form1()
         {
@@ -284,7 +276,7 @@ namespace WebScraper
                 DevStatsTxt.Text += "\nProductos insertados o actualizados correctamente en MongoDB";
             }
 
-            // Interactuamos con cada perfil del tenista
+            // Interactuamos con cada perfil stat del tenista
             foreach (var statsUrl in StatsUrls)
             {
                 DevStatsTxt.Text = "";
@@ -376,6 +368,95 @@ namespace WebScraper
                     var optionss = new ReplaceOptions { IsUpsert = true };
 
                     playersCollection.ReplaceOne(filter, tenisPlayerStat, optionss);
+                }
+                DevStatsTxt.Text += "\nProductos insertados o actualizados correctamente en MongoDB";
+            }
+
+            // Interactuamos con cada perfil activity del tenista
+            foreach (var ActivUrl in ActivUrls)
+            {
+                DevStatsTxt.Text = "";
+                driver = new ChromeDriver(chromeService, options);
+
+                // Navegar a la página
+                driver.Navigate().GoToUrl(ActivUrl);
+
+                wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
+
+                CargarCookies(driver, wait);
+
+                // Obtener elementos de productos con Selenium
+                wait.Until(d => d.FindElements(By.CssSelector(".tournament")));
+                productElements = driver.FindElements(By.CssSelector(".tournament"));
+
+                string[] partsUrl = driver.Url.Split('/');
+                string playerId = partsUrl[partsUrl.Length - 2];
+
+                // Iterating over the list of product HTML elements 
+                foreach (var productElement in productElements)
+                {
+                    // Obtener elementos de productos con Selenium
+                    wait.Until(d => d.FindElements(By.CssSelector(".ranking-item")));
+                    var matchElements = productElement.FindElements(By.CssSelector(".ranking-item"));
+                    var tournament = productElement.FindElement(By.CssSelector(".status-country .title")).Text;
+
+                    foreach ( var matchElement in matchElements)
+                    {
+                        try
+                        {
+                            string[] matchUrl = matchElement.FindElement(By.CssSelector(".set-points a")).GetAttribute("href").Split('/');
+
+                            string matchId = matchUrl[9];
+                            string matchUser1 = playerId;
+                            string matchUser2 = matchElement.FindElement(By.CssSelector(".name a")).GetAttribute("href").Split('/')[6];
+                            string rd = matchElement.FindElement(By.CssSelector("dt")).Text;
+
+                            string winner = "";
+                            if (matchElement.FindElement(By.CssSelector(".set-check div span")).GetAttribute("class").Contains("icon-checkmark"))
+                                winner = playerId;
+                            else
+                                winner = matchUser2;
+
+                            string year = matchUrl[7];
+                            string set1 = matchElement.FindElement(By.CssSelector(".set-points a div:nth-child(1)")).Text;
+                            string set2 = matchElement.FindElement(By.CssSelector(".set-points a div:nth-child(2)")).Text;
+                            string set3 = matchElement.FindElement(By.CssSelector(".set-points a div:nth-child(3)")).Text;
+                            string set4 = matchElement.FindElement(By.CssSelector(".set-points a div:nth-child(4)")).Text;
+                            string set5 = matchElement.FindElement(By.CssSelector(".set-points a div:nth-child(5)")).Text;
+
+                            tenisPlayerActivity.Add(new TenisPlayerActivity()
+                            {
+                                MatchId = matchId,
+                                MatchUser1 = matchUser1,
+                                MatchUser2 = matchUser2,
+                                Tournament = tournament,
+                                Rd = rd,
+                                Winner = winner,
+                                Year = year,
+                                Set1 = set1,
+                                Set2 = set2,
+                                Set3 = set3,
+                                Set4 = set4,
+                                Set5 = set5,
+                            });
+                        }
+                        catch (NoSuchElementException)
+                        {
+                            DevStatsTxt.Text += "\nAlgunos elementos no se encontraron y se omitieron\n";
+                        }
+                    }
+                }
+
+                driver.Quit();
+
+                // Insertar o actualizar en MongoDB
+                var playersCollection = database.GetCollection<TenisPlayerActivity>("tenis_player_activity");
+                foreach (var tenisPlayerActivit in tenisPlayerActivity)
+                {
+                    var filter = Builders<TenisPlayerActivity>.Filter.Eq(p => p.MatchId, tenisPlayerActivit.MatchId);
+                    var optionss = new ReplaceOptions { IsUpsert = true };
+
+                    playersCollection.ReplaceOne(filter, tenisPlayerActivit, optionss);
                 }
                 DevStatsTxt.Text += "\nProductos insertados o actualizados correctamente en MongoDB";
             }
